@@ -23,7 +23,6 @@ services:
       - ./jenkins-data:/var/jenkins_home:rw
       - ./jenkins-docker-certs:/certs/client:ro
       - ./extras:/extras:rw
-      - ./docker-data:/var/lib/docker
 
   jenkins_docker:
     image: docker:dind
@@ -41,4 +40,3 @@ services:
       - ./jenkins-docker-certs:/certs/client
       - ./jenkins-data:/var/jenkins_home
       - ./extras:/extras
-      - ./docker-data:/var/lib/docker
