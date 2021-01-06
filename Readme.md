@@ -1,8 +1,10 @@
 # Jenkins Docker Setup
 
-This repo contains required docker configurations to help quick and reproducible setup of Jenkins.
+This repo contains:
 
-Jenkins installation [page](https://www.jenkins.io/doc/book/installing/docker/) provides us with more detailed explaination of the same and this repo just convert the same set of instructions into easier portable solution using `docker-compose`.
+- Required docker configurations to setup of Jenkins which is quick and reproducible.
+- Jenkins docker installation [page](https://www.jenkins.io/doc/book/installing/docker/) provides us with more detailed explaination.
+- This repo just convert the same set of instructions into easier portable solution using `docker-compose`.
 
 # Usage:
 
@@ -16,9 +18,9 @@ Creating JenkinsServer ... done
 
 The [`docker-compose.yaml`](./docker-compose.yaml) file defines following components:
 
-- jenkins network: Defines underlying bridge network.
-- jenkins server: This is jenkins server container definition.
-- jenkins docker: A `docker:dind` container to enable running docker inside docker.
+- Jenkins Network: Defines underlying bridge network.
+- Jenkins Server: This is jenkins server container definition.
+- Jenkins Docker: A `docker:dind` container to enable running docker inside docker.
 
 ### Jenkins Network:
 
@@ -72,4 +74,46 @@ services:
       - ./jenkins-data:/var/jenkins_home:rw # Docker client certs.
       - ./jenkins-docker-certs:/certs/client:ro # Preserves Jenkins data like job definitions, credentials, build logs, etc.
       - ./extras:/extras:rw # Any extra data or files you want to cache between server restart can be saved here `/extras/`.
+```
+
+### Dockerfile
+
+We have customised docker image `jenkins/jenkins:lts-slim` in the [Dockerfile](./Dockerfile) to 
+- Include few useful plugins and 
+- Installed docker cli to be able to build our jobs inside docker containers to maintain isolation.
+
+```Dockerfile
+FROM jenkins/jenkins:lts-slim
+USER root
+RUN apt-get update && apt-get install -y --no-install-recommends \
+       apt-transport-https \
+       ca-certificates curl gnupg2 \
+       software-properties-common
+RUN curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
+RUN apt-key fingerprint 0EBFCD88
+RUN add-apt-repository \
+       "deb [arch=amd64] https://download.docker.com/linux/debian \
+       $(lsb_release -cs) stable"
+RUN apt-get update && apt-get install -y docker-ce-cli
+USER jenkins
+RUN jenkins-plugin-cli --plugins blueocean:1.24.3
+
+```
+
+### Other useful components:
+
+```bash
+$ tree -aL 1
+.
+├── .dockerignore # Contains file patterns to ignore, while creating docker context
+├── .git
+├── .gitignore # Ignores docker volume mounts
+├── Dockerfile
+├── LICENSE
+├── Readme.md
+├── docker-compose.yaml
+├── docker-data
+├── extras # extras volume mount
+├── jenkins-data # Jenkins build logs, etc volume mount
+└── jenkins-docker-certs # docker certs volume mount
 ```
