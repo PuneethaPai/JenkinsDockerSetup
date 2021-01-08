@@ -13,6 +13,8 @@ $ docker-compose up --build
 Creating JenkinsDocker ... done
 Creating JenkinsServer ... done
 ```
+JenkinsServer is now accecible at [localhost:8080/](http://localhost:8080/).
+
 
 ## Details:
 
@@ -24,6 +26,8 @@ The [`docker-compose.yaml`](./docker-compose.yaml) file defines following compon
 
 ### Jenkins Network:
 
+Here we will be setting up the underlying network for the containers to communicate between themself. We create a bridge network with name space as `jenkins`.
+
 ```yaml
 networks:
   jenkins:
@@ -31,6 +35,15 @@ networks:
 ```
 
 ### Jenkins Docker:
+
+It is a good practice to run the Jenkins job inside docker containers rather than Jenkins host machine itself. 
+
+- This enables us to maintain isolation between multiple Jenkins Pipelines and Jobs.
+- Also we ahieve an easily reproducible/debuggable job execution environment setup.
+
+Since this is a Jenkins Server setup running as docker container we would need to setup `docker-inside-docker`, i.e to be able to run docker commands and containers (JOBS containers) inside another docker container (Jenkins Server Container). This is made possible with using `docker:dind` container.
+
+Here JenkinsDocker container starts docker-engine and exposes it at address `tcp://docker:2376`. This address will be used later by JenkinsServer container to bring up Jobs containers.
 
 ```yaml
 services:
@@ -53,6 +66,8 @@ services:
 ```
 
 ### Jenkins Server:
+
+As last part of the equation, we would bring up JenkinsSever container using customised image `jenkins/jenkins:lts-slim`. JenkinsServer is now accecible at [localhost:8080/](http://localhost:8080/).
 
 ```yaml
 services:
