@@ -16,6 +16,8 @@ Creating JenkinsServer ... done
 JenkinsServer is now accecible at [localhost:8080/](http://localhost:8080/).
 
 
+Now Jenkins Server is accessible at [localhost:8080](http://localhost:8080/).
+
 ## Details:
 
 The [`docker-compose.yaml`](./docker-compose.yaml) file defines following components:
@@ -93,8 +95,9 @@ services:
 
 ### Dockerfile
 
-We have customised docker image `jenkins/jenkins:lts-slim` in the [Dockerfile](./Dockerfile) to 
-- Include few useful plugins and 
+We have customised docker image `jenkins/jenkins:lts-slim` in the [Dockerfile](./Dockerfile) to
+
+- Include few useful plugins and
 - Installed docker cli to be able to build our jobs inside docker containers to maintain isolation.
 
 ```Dockerfile

@@ -1,4 +1,4 @@
-FROM jenkins/jenkins:lts-slim
+FROM jenkins/jenkins:latest
 USER root
 RUN apt-get update && apt-get install -y --no-install-recommends \
        apt-transport-https \
@@ -11,4 +11,4 @@ RUN add-apt-repository \
        $(lsb_release -cs) stable"
 RUN apt-get update && apt-get install -y docker-ce-cli
 USER jenkins
-RUN jenkins-plugin-cli --plugins blueocean:1.24.3
+RUN jenkins-plugin-cli --plugins blueocean
